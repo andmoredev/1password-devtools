@@ -89,7 +89,7 @@ jobs:
           stackOutputJson=$(aws cloudformation describe-stacks --output json --stack-name ${{ inputs.STACK_NAME }} --query "Stacks[0].Outputs")
           url=$(echo $stackOutputJson | jq -r '.[] | select(.OutputKey=="ApiURL") | .OutputValue')
           cognitoUserPoolId=$(echo $stackOutputJson | jq -r '.[] | select(.OutputKey=="CognitoUserPoolId") | .OutputValue')
-          cognitoClientId=$(echo $stackOutputJson | jq -r '.[] | select(.OutputKey=="CognitoUserPoolClient") | .OutputValue')
+          cognitoClientId=$(echo $stackOutputJson | jq -r '.[] | select(.OutputKey=="CognitoUserPoolClientId") | .OutputValue')
           echo "# Resource Summary" >> $GITHUB_STEP_SUMMARY
           echo "* API - $url" >> $GITHUB_STEP_SUMMARY
           echo "* Cognito User Pool ID - $cognitoUserPoolId" >> $GITHUB_STEP_SUMMARY

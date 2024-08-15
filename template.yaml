@@ -95,3 +95,8 @@ Outputs:
   CognitoUserPoolId:
     Description: Cognito User Pool Id
     Value: !Ref CognitoUserPoolId
+
+  CognitoUserPoolClientId:
+    Description: Cognito User Pool Client Id
+    Value: !GetAtt CognitoUserPoolClient.ClientId
+
