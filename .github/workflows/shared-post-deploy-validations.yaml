@@ -12,6 +12,9 @@ on:
       COGNITO_USER_POOL_ID:
         type: string
         required: true
+      COGNITO_CLIENT_ID:
+        type: string
+        required: true
 jobs:
   test-api-with-user-password-auth-inline-create-user:
     name: Run Portman With USER_PASSWORD_AUTH - Inline Create User
@@ -20,11 +23,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Load secret
+        id: op-load-secret
+        uses: 1password/load-secrets-action@v2
+        with:
+          export-env: true
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          PIPELINE_EXECUTION_ROLE: op://andmoredev-sandbox/cicd/pipeline-execution-role-arn
+          COGNITO_URL: op://andmoredev-sandbox/auth/cognito-url
+
+
       - name: Configure AWS
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: us-east-1
-          role-to-assume: ${{ secrets.PIPELINE_EXECUTION_ROLE }}
+          role-to-assume: ${{ env.PIPELINE_EXECUTION_ROLE }}
           role-session-name: create-test-user
           role-duration-seconds: 3600
           role-skip-session-tagging: true
@@ -40,8 +54,8 @@ jobs:
 
       - name: Test API
         env:
-          COGNITO_URL: ${{ secrets.COGNITO_URL }}
-          CLIENT_ID: ${{ secrets.COGNITO_CLIENT_ID }}
+          COGNITO_URL: ${{ env.COGNITO_URL }}
+          CLIENT_ID: ${{ inputs.COGNITO_CLIENT_ID }}
         run: |
           npm ci
 
@@ -59,12 +73,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Load secret
+        id: op-load-secret
+        uses: 1password/load-secrets-action@v2
+        with:
+          export-env: true
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          COGNITO_URL: op://andmoredev-sandbox/auth/cognito-url
+          TEST_USERNAME: op://andmoredev-sandbox/auth/test-username
+          TEST_PASSWORD: op://andmoredev-sandbox/auth/test-password
+
       - name: Test API
         env:
-          COGNITO_URL: ${{ secrets.COGNITO_URL }}
-          CLIENT_ID: ${{ secrets.COGNITO_CLIENT_ID }}
-          USERNAME: ${{ secrets.COGNITO_USERNAME }}
-          PASSWORD: ${{ secrets.COGNITO_PASSWORD }}
+          COGNITO_URL: ${{ env.COGNITO_URL }}
+          CLIENT_ID: ${{ inputs.COGNITO_CLIENT_ID }}
+          USERNAME: ${{ env.TEST_USERNAME }}
+          PASSWORD: ${{ env.TEST_PASSWORD }}
         run: |
           npm ci
 

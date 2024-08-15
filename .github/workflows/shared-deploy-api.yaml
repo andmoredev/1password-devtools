@@ -17,6 +17,8 @@ on:
         value: ${{ jobs.deploy.outputs.API_BASE_URL }}
       COGNITO_USER_POOL_ID:
         value: ${{ jobs.deploy.outputs.COGNITO_USER_POOL_ID }}
+      COGNITO_CLIENT_ID:
+        value: ${{ jobs.deploy.outputs.COGNITO_CLIENT_ID }}
 
 permissions:
   id-token: write
@@ -30,6 +32,7 @@ jobs:
     outputs:
       API_BASE_URL: ${{ steps.getStackOutputs.outputs.API_BASE_URL }}
       COGNITO_USER_POOL_ID: ${{ steps.getStackOutputs.outputs.COGNITO_USER_POOL_ID }}
+      COGNITO_CLIENT_ID: ${{ steps.getStackOutputs.outputs.COGNITO_CLIENT_ID }}
     steps:
       - uses: actions/checkout@v4
 
@@ -40,9 +43,9 @@ jobs:
           export-env: true
         env:
           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-          PIPELINE_EXECUTION_ROLE: op://development/sandbox/cicd/pipeline-execution-role-arn
-          CLOUDFORMATION_EXECUTION_ROLE: op://development/sandbox/cicd/cloudformation-exeuction-role-arn
-          ARTIFACTS_BUCKET_NAME: op://development/sandbox/cicd/artifact-bucket-name
+          PIPELINE_EXECUTION_ROLE: op://andmoredev-sandbox/cicd/pipeline-execution-role-arn
+          CLOUDFORMATION_EXECUTION_ROLE: op://andmoredev-sandbox/cicd/cloudformation-exeuction-role-arn
+          ARTIFACTS_BUCKET_NAME: op://andmoredev-sandbox/cicd/artifact-bucket-name
 
       - name: Configure AWS
         uses: aws-actions/configure-aws-credentials@v4
@@ -53,8 +56,19 @@ jobs:
           role-duration-seconds: 3600
           role-skip-session-tagging: true
 
+      - name: Install 1Password CLI
+        uses: 1password/install-cli-action@v1
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+
       - name: SAM Build and Deploy
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
         run: |
+          op --version
+          op inject -i ./samconfig.yaml -o ./samconfig.ci.yaml
+
           npm install -g esbuild
           npm ci
 
@@ -75,8 +89,11 @@ jobs:
           stackOutputJson=$(aws cloudformation describe-stacks --output json --stack-name ${{ inputs.STACK_NAME }} --query "Stacks[0].Outputs")
           url=$(echo $stackOutputJson | jq -r '.[] | select(.OutputKey=="ApiURL") | .OutputValue')
           cognitoUserPoolId=$(echo $stackOutputJson | jq -r '.[] | select(.OutputKey=="CognitoUserPoolId") | .OutputValue')
+          cognitoClientId=$(echo $stackOutputJson | jq -r '.[] | select(.OutputKey=="CognitoUserPoolClientId") | .OutputValue')
           echo "# Resource Summary" >> $GITHUB_STEP_SUMMARY
           echo "* API - $url" >> $GITHUB_STEP_SUMMARY
-          echo "* Cognito User Pool Client ID - $cognitoUserPoolId" >> $GITHUB_STEP_SUMMARY
+          echo "* Cognito User Pool ID - $cognitoUserPoolId" >> $GITHUB_STEP_SUMMARY
+          echo "* Cognito User Pool Client ID - $cognitoClientId" >> $GITHUB_STEP_SUMMARY
           echo "API_BASE_URL=$url" >> $GITHUB_OUTPUT
           echo "COGNITO_USER_POOL_ID=$cognitoUserPoolId" >> $GITHUB_OUTPUT
+          echo "COGNITO_CLIENT_ID=$cognitoClientId" >> $GITHUB_OUTPUT

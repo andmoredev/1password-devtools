@@ -25,7 +25,7 @@ jobs:
     with:
       ENVIRONMENT: sandbox
       AWS_REGION: us-east-1
-      STACK_NAME: 1password-devtools
+      STACK_NAME: onepassword-devtools
     secrets: inherit
 
   postdeploy-validations:
@@ -36,6 +36,7 @@ jobs:
       ENVIRONMENT: sandbox
       BASE_URL: ${{ needs.deploy.outputs.API_BASE_URL }}
       COGNITO_USER_POOL_ID: ${{ needs.deploy.outputs.COGNITO_USER_POOL_ID }}
+      COGNITO_CLIENT_ID: ${{ needs.deploy.outputs.COGNITO_CLIENT_ID }}
     secrets: inherit
 
   auto-merge-dependabot-update:
