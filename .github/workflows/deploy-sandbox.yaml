@@ -25,7 +25,7 @@ jobs:
     with:
       ENVIRONMENT: sandbox
       AWS_REGION: us-east-1
-      STACK_NAME: 1password-devtools
+      STACK_NAME: onepassword-devtools
     secrets: inherit
 
   postdeploy-validations:
