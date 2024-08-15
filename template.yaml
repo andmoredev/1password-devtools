@@ -1,0 +1,101 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Layerless ESBuild Example
+Transform:
+  - AWS::Serverless-2016-10-31
+
+Globals:
+  Function:
+    Timeout: 10
+    Runtime: nodejs20.x
+    MemorySize: 768
+    Handler: index.handler
+    Environment:
+      Variables:
+        AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+        AWS_ACCOUNT_ID: !Sub ${AWS::AccountId}
+        POWERTOOLS_SERVICE_NAME: layerless-esbuild-lambda-api
+        POWERTOOLS_METRICS_NAMESPACE: layerless-esbuild-lambda
+
+Parameters:
+  CallbackURLs:
+    Type: CommaDelimitedList
+
+  CognitoUserPoolId:
+    Type: 'AWS::SSM::Parameter::Value<String>'
+    Default: '/andmoredev-auth/CognitoUserPoolId'
+
+  CognitoUserPoolArn:
+    Type: 'AWS::SSM::Parameter::Value<String>'
+    Default: '/andmoredev-auth/CognitoUserPoolArn'
+
+Resources:
+  CognitoUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId: !Ref CognitoUserPoolId
+      # AllowedOAuthFlows:
+      #   - code
+      # AllowedOAuthScopes:
+      #   - email
+      #   - openid
+      #   - profile
+      CallbackURLs: !Ref CallbackURLs
+      # AllowedOAuthFlowsUserPoolClient: true
+      SupportedIdentityProviders:
+        - COGNITO
+      ExplicitAuthFlows:
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+
+  API:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: api
+      # Auth:
+      #   DefaultAuthorizer: ClientCognitoAuthorizer
+      #   Authorizers:
+      #     ClientCognitoAuthorizer:
+      #       UserPoolArn: !Ref CognitoUserPoolArn
+      #       # AuthorizationScopes:
+      #       #   - email
+      #       #   - openid
+      #       #   - profile
+      DefinitionBody:
+        Fn::Transform:
+          Name: AWS::Include
+          Parameters:
+            Location: ./openapi.yaml
+
+  EchoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/functions/echo
+      Events:
+        EchoEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref API
+            Path: /echo
+            Method: POST
+      Policies:
+        - AWSLambdaBasicExecutionRole
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Format: esm
+        Minify: false
+        OutExtension:
+          - .js=.mjs
+        Target: es2020
+        Sourcemap: false
+        EntryPoints:
+          - index.mjs
+        Banner:
+          - js=import { createRequire } from 'module'; const require = createRequire(import.meta.url);
+        External:
+          - '@aws-sdk/client-secrets-manager'
+
+Outputs:
+  ApiURL:
+    Description: API URL
+    Value: !Sub https://${API}.execute-api.${AWS::Region}.amazonaws.com/api

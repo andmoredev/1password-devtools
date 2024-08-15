@@ -1,0 +1,474 @@
+{
+  "type": "object",
+  "required": [
+    "pk",
+    "sk",
+    "gsi2pk",
+    "gsi2sk",
+    "gsi3pk",
+    "gsi3sk",
+    "gsi4pk",
+    "gsi4sk",
+    "keyParts",
+    "data",
+    "audit",
+    "metrics"
+  ],
+  "properties": {
+    "pk": {
+      "type": "string",
+      "description": "[instanceId]#[incidentId]"
+    },
+    "sk": {
+      "type": "string",
+      "description": "incident#"
+    },
+    "gsi2pk": {
+      "type": "string",
+      "description": "[instanceId]#[prosecutionOfficeId]"
+    },
+    "gsi2sk": {
+      "type": "string",
+      "description": "submitted#[submittedTimestamp]"
+    },
+    "gsi3pk": {
+      "type": "string",
+      "description": "[instanceId]#[prosecutionOfficeId]"
+    },
+    "gsi3sk": {
+      "type": "string",
+      "description": "[agencyCaseNumber]#"
+    },
+    "gsi4pk": {
+      "type": "string",
+      "description": "[instanceId]#[lawEnforcementAgencyId]"
+    },
+    "gsi4sk": {
+      "type": "string",
+      "description": "[agencyCaseNumber]#"
+    },
+    "keyParts": {
+      "type": "object",
+      "required": [
+        "instanceId",
+        "incidentId"
+      ],
+      "properties": {
+        "instanceId": {
+          "type": "string"
+        },
+        "incidentId": {
+          "type": "string"
+        }
+      }
+    },
+    "data": {
+      "type": "object",
+      "required": [
+        "prosecutionOffice",
+        "lawEnforcementAgency",
+        "lawEnforcementAgencyCaseNumber",
+        "status",
+        "folders"
+      ],
+      "properties": {
+        "lawEnforcementAgency": {
+          "type": "object",
+          "required": [
+            "id",
+            "name"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Identifier of the organization."
+            },
+            "name": {
+              "type": "string",
+              "description": "Name of the organization."
+            }
+          }
+        },
+        "prosecutionOffice": {
+          "type": "object",
+          "required": [
+            "id",
+            "name"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Identifier of the organization."
+            },
+            "name": {
+              "type": "string",
+              "description": "Name of the organization."
+            }
+          }
+        },
+        "agencyContact": {
+          "type": "object",
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "type": "object",
+              "required": [
+                "firstName",
+                "lastName"
+              ],
+              "properties": {
+                "firstName": {
+                  "type": "string",
+                  "maxLength": 100
+                },
+                "lastName": {
+                  "type": "string",
+                  "maxLength": 100
+                },
+                "middleName": {
+                  "type": "string",
+                  "maxLength": 100
+                },
+                "suffix": {
+                  "type": "string",
+                  "maxLength": 50,
+                  "enum": [
+                    "CPA",
+                    "DDS",
+                    "II",
+                    "III",
+                    "IV",
+                    "Jr.",
+                    "MD",
+                    "PhD",
+                    "Sr."
+                  ]
+                }
+              }
+            },
+            "email": {
+              "type": "string",
+              "format": "email"
+            },
+            "phoneNumber": {
+              "type": "string",
+              "pattern": "^[0-9]{10}$"
+            }
+          }
+        },
+        "lawEnforcementAgencyCaseNumber": {
+          "type": "string",
+          "minLength": 1
+        },
+        "incidentDate": {
+          "type": "string",
+          "format": "date",
+          "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$"
+        },
+        "defendants": {
+          "type": "array",
+          "maxItems": 50,
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "object",
+                "required": [
+                  "firstName",
+                  "lastName"
+                ],
+                "properties": {
+                  "firstName": {
+                    "type": "string",
+                    "maxLength": 100
+                  },
+                  "lastName": {
+                    "type": "string",
+                    "maxLength": 100
+                  },
+                  "middleName": {
+                    "type": "string",
+                    "maxLength": 100
+                  },
+                  "suffix": {
+                    "type": "string",
+                    "maxLength": 50,
+                    "enum": [
+                      "CPA",
+                      "DDS",
+                      "II",
+                      "III",
+                      "IV",
+                      "Jr.",
+                      "MD",
+                      "PhD",
+                      "Sr."
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "submitted",
+            "inactive"
+          ]
+        },
+        "folders": {
+          "type": "object",
+          "required": [
+            "incidentFolderId",
+            "submissionFolderId",
+            "newFolderId",
+            "releasedFolderId",
+            "readyForReleaseFolderId",
+            "doNotReleaseFolderId"
+          ],
+          "properties": {
+            "incidentFolderId": {
+              "type": "string",
+              "description": "Box Folder Id."
+            },
+            "submissionFolderId": {
+              "type": "string",
+              "description": "Box Folder Id."
+            },
+            "newFolderId": {
+              "type": "string",
+              "description": "Box Folder Id."
+            },
+            "releasedFolderId": {
+              "type": "string",
+              "description": "Box Folder Id."
+            },
+            "readyForReleaseFolderId": {
+              "type": "string",
+              "description": "Box Folder Id."
+            },
+            "doNotReleaseFolderId": {
+              "type": "string",
+              "description": "Box Folder Id."
+            }
+          }
+        },
+        "releaseSnapshotObjectKey": {
+          "type": "string"
+        },
+        "shareSnapshotObjectKey": {
+          "type": "string"
+        }
+      }
+    },
+    "audit": {
+      "allOf": [
+        {
+          "type": "object",
+          "required": [
+            "createdBy",
+            "createdTimestamp",
+            "lastModifiedBy",
+            "lastModifiedTimestamp"
+          ],
+          "properties": {
+            "createdBy": {
+              "type": "object",
+              "required": [
+                "id",
+                "name"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "object",
+                  "required": [
+                    "firstName",
+                    "lastName"
+                  ],
+                  "properties": {
+                    "firstName": {
+                      "type": "string",
+                      "maxLength": 100
+                    },
+                    "lastName": {
+                      "type": "string",
+                      "maxLength": 100
+                    },
+                    "middleName": {
+                      "type": "string",
+                      "maxLength": 100
+                    },
+                    "suffix": {
+                      "type": "string",
+                      "maxLength": 50,
+                      "enum": [
+                        "CPA",
+                        "DDS",
+                        "II",
+                        "III",
+                        "IV",
+                        "Jr.",
+                        "MD",
+                        "PhD",
+                        "Sr."
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "createdTimestamp": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])T(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]\\.[0-9]{3}Z$"
+            },
+            "lastModifiedBy": {
+              "type": "object",
+              "required": [
+                "id",
+                "name"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "object",
+                  "required": [
+                    "firstName",
+                    "lastName"
+                  ],
+                  "properties": {
+                    "firstName": {
+                      "type": "string",
+                      "maxLength": 100
+                    },
+                    "lastName": {
+                      "type": "string",
+                      "maxLength": 100
+                    },
+                    "middleName": {
+                      "type": "string",
+                      "maxLength": 100
+                    },
+                    "suffix": {
+                      "type": "string",
+                      "maxLength": 50,
+                      "enum": [
+                        "CPA",
+                        "DDS",
+                        "II",
+                        "III",
+                        "IV",
+                        "Jr.",
+                        "MD",
+                        "PhD",
+                        "Sr."
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "lastModifiedTimestamp": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])T(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]\\.[0-9]{3}Z$"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "submittedBy",
+            "submittedTimestamp"
+          ],
+          "properties": {
+            "submittedBy": {
+              "type": "object",
+              "required": [
+                "id",
+                "name"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "object",
+                  "required": [
+                    "firstName",
+                    "lastName"
+                  ],
+                  "properties": {
+                    "firstName": {
+                      "type": "string",
+                      "maxLength": 100
+                    },
+                    "lastName": {
+                      "type": "string",
+                      "maxLength": 100
+                    },
+                    "middleName": {
+                      "type": "string",
+                      "maxLength": 100
+                    },
+                    "suffix": {
+                      "type": "string",
+                      "maxLength": 50,
+                      "enum": [
+                        "CPA",
+                        "DDS",
+                        "II",
+                        "III",
+                        "IV",
+                        "Jr.",
+                        "MD",
+                        "PhD",
+                        "Sr."
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "submittedTimestamp": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        }
+      ]
+    },
+    "metrics": {
+      "type": "object",
+      "properties": {
+        "defendants": {
+          "type": "number",
+          "description": "Total number of defendants on an incident."
+        },
+        "prosecutors": {
+          "type": "number",
+          "description": "Total number of prosecutors on an incident."
+        },
+        "submissions": {
+          "type": "number",
+          "description": "Total number of submissions on an incident."
+        },
+        "releases": {
+          "type": "number",
+          "description": "Total number of releases that have been done for the incident, if a full release is recalled this number will not go down."
+        }
+      }
+    }
+  }
+}

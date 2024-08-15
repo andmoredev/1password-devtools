@@ -1,0 +1,25 @@
+version: 0.1
+default:
+  build:
+    parameters:
+      cached: 'true'
+      parallel: 'true'
+
+  sync:
+    parameters:
+      watch: 'true'
+      stack_name: 1password-devtools
+      capabilities: CAPABILITY_IAM CAPABILITY_AUTO_EXPAND
+      image_repositories: []
+      parameter_overrides: [
+        "ApiKey=op://Dev Secrets/SendgrID/api key"
+      ]
+
+  deploy:
+    parameters:
+      stack_name: 1password-devtools
+      capabilities: CAPABILITY_IAM
+      image_repositories: []
+      parameter_overrides: [
+        "ApiKey=op://Dev Secrets/SendgrID/api key"
+      ]
