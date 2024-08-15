@@ -1,14 +1,11 @@
 import js from "@eslint/js";
-import google from "eslint-config-google";
 
 export default [
   js.configs.recommended,
-  google,
   {
     ignores: [
       'node_modules',
-      '.aws-sam',
-      'src/functions/echo/**/*.mjs'
+      '.aws-sam'
     ]
   },
   {
