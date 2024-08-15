@@ -17,6 +17,8 @@ on:
         value: ${{ jobs.deploy.outputs.API_BASE_URL }}
       COGNITO_USER_POOL_ID:
         value: ${{ jobs.deploy.outputs.COGNITO_USER_POOL_ID }}
+      COGNITO_CLIENT_ID:
+        value: ${{ jobs.deploy.outputs.COGNITO_CLIENT_ID }}
 
 permissions:
   id-token: write
@@ -30,6 +32,7 @@ jobs:
     outputs:
       API_BASE_URL: ${{ steps.getStackOutputs.outputs.API_BASE_URL }}
       COGNITO_USER_POOL_ID: ${{ steps.getStackOutputs.outputs.COGNITO_USER_POOL_ID }}
+      COGNITO_CLIENT_ID: ${{ steps.getStackOutputs.outputs.COGNITO_CLIENT_ID }}
     steps:
       - uses: actions/checkout@v4
 
@@ -86,8 +89,11 @@ jobs:
           stackOutputJson=$(aws cloudformation describe-stacks --output json --stack-name ${{ inputs.STACK_NAME }} --query "Stacks[0].Outputs")
           url=$(echo $stackOutputJson | jq -r '.[] | select(.OutputKey=="ApiURL") | .OutputValue')
           cognitoUserPoolId=$(echo $stackOutputJson | jq -r '.[] | select(.OutputKey=="CognitoUserPoolId") | .OutputValue')
+          cognitoClientId=$(echo $stackOutputJson | jq -r '.[] | select(.OutputKey=="CognitoUserPoolClient") | .OutputValue')
           echo "# Resource Summary" >> $GITHUB_STEP_SUMMARY
           echo "* API - $url" >> $GITHUB_STEP_SUMMARY
-          echo "* Cognito User Pool Client ID - $cognitoUserPoolId" >> $GITHUB_STEP_SUMMARY
+          echo "* Cognito User Pool ID - $cognitoUserPoolId" >> $GITHUB_STEP_SUMMARY
+          echo "* Cognito User Pool Client ID - $cognitoClientId" >> $GITHUB_STEP_SUMMARY
           echo "API_BASE_URL=$url" >> $GITHUB_OUTPUT
           echo "COGNITO_USER_POOL_ID=$cognitoUserPoolId" >> $GITHUB_OUTPUT
+          echo "COGNITO_CLIENT_ID=$cognitoClientId" >> $GITHUB_OUTPUT
