@@ -64,7 +64,7 @@ jobs:
           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
         run: |
           op --version
-          op inject -i ./samconfig.yaml -o ./samconfig-ci.yaml
+          op inject -i ./samconfig.yaml -o ./samconfig.ci.yaml
 
           npm install -g esbuild
           npm ci
