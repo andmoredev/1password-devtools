@@ -59,7 +59,7 @@ jobs:
       - name: SAM Build and Deploy
         run: |
           op --version
-          op inject -i .\samconfig.yaml -o .\samconfig-ci.yaml
+          op inject -i ./samconfig.yaml -o ./samconfig-ci.yaml
 
           npm install -g esbuild
           npm ci
