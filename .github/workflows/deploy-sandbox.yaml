@@ -13,44 +13,19 @@ permissions:
   id-token: write
   contents: read
 
-env:
-  BRANCH_NAME: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.event_name == 'pull_request' && github.head_ref }}
-
 jobs:
   predeploy-validations:
     name: Pre-deploy validations
     uses: ./.github/workflows/shared-pre-deploy-validations.yaml
 
-  get-stack-name:
-    name: Get Stack Name
-    runs-on: ubuntu-latest
-    outputs:
-      STACK_NAME: ${{ steps.stack-name-step.outputs.STACK_NAME || steps.dependabot-stack-name-step.outputs.STACK_NAME }}
-    steps:
-      - name: Set the stack name to be used as input
-        if: ${{ github.actor != 'dependabot[bot]' }}
-        id: stack-name-step
-        run: |
-          echo "STACK_NAME=layerless-esbuild-lambda-$BRANCH_NAME" >> $GITHUB_OUTPUT
-          echo "# Stack Name" >> $GITHUB_STEP_SUMMARY
-          echo "* layerless-esbuild-lambda-$BRANCH_NAME" >> $GITHUB_STEP_SUMMARY
-
-      - name: Set the formatted dependabot branch name to be used as input
-        if: ${{ github.actor == 'dependabot[bot]' && github.event_name == 'pull_request' }}
-        id: dependabot-stack-name-step
-        run: |
-          prNumber=$(echo "pr-${{ github.event.number }}")
-          echo "STACK_NAME=layerless-esbuild-lambda-$prNumber" >> $GITHUB_OUTPUT
-          echo "### Stack Name (Dependabot) layerless-esbuild-lambda-$prNumber" >> $GITHUB_STEP_SUMMARY
-
   deploy:
     name: API Deployment
-    needs: [predeploy-validations, get-stack-name]
+    needs: [predeploy-validations]
     uses: ./.github/workflows/shared-deploy-api.yaml
     with:
       ENVIRONMENT: sandbox
       AWS_REGION: us-east-1
-      STACK_NAME: layerless-esbuild-lambda
+      STACK_NAME: 1password-devtools
     secrets: inherit
 
   postdeploy-validations:
@@ -60,6 +35,7 @@ jobs:
     with:
       ENVIRONMENT: sandbox
       BASE_URL: ${{ needs.deploy.outputs.API_BASE_URL }}
+      COGNITO_USER_POOL_ID: ${{ needs.deploy.outputs.COGNITO_USER_POOL_ID }}
     secrets: inherit
 
   auto-merge-dependabot-update:

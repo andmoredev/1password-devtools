@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: Layerless ESBuild Example
+Description: Trying out 1Password for development flows
 Transform:
   - AWS::Serverless-2016-10-31
 
@@ -11,15 +11,11 @@ Globals:
     Handler: index.handler
     Environment:
       Variables:
-        AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
         AWS_ACCOUNT_ID: !Sub ${AWS::AccountId}
-        POWERTOOLS_SERVICE_NAME: layerless-esbuild-lambda-api
-        POWERTOOLS_METRICS_NAMESPACE: layerless-esbuild-lambda
+        POWERTOOLS_SERVICE_NAME: 1password-devtools-api
+        POWERTOOLS_METRICS_NAMESPACE: 1password-devtools
 
 Parameters:
-  CallbackURLs:
-    Type: CommaDelimitedList
-
   CognitoUserPoolId:
     Type: 'AWS::SSM::Parameter::Value<String>'
     Default: '/andmoredev-auth/CognitoUserPoolId'
@@ -33,38 +29,34 @@ Resources:
     Type: AWS::Cognito::UserPoolClient
     Properties:
       UserPoolId: !Ref CognitoUserPoolId
-      # AllowedOAuthFlows:
-      #   - code
-      # AllowedOAuthScopes:
-      #   - email
-      #   - openid
-      #   - profile
-      CallbackURLs: !Ref CallbackURLs
-      # AllowedOAuthFlowsUserPoolClient: true
       SupportedIdentityProviders:
         - COGNITO
       ExplicitAuthFlows:
-        - ALLOW_USER_SRP_AUTH
+        - ALLOW_USER_PASSWORD_AUTH
         - ALLOW_REFRESH_TOKEN_AUTH
 
   API:
     Type: AWS::Serverless::Api
     Properties:
       StageName: api
-      # Auth:
-      #   DefaultAuthorizer: ClientCognitoAuthorizer
-      #   Authorizers:
-      #     ClientCognitoAuthorizer:
-      #       UserPoolArn: !Ref CognitoUserPoolArn
-      #       # AuthorizationScopes:
-      #       #   - email
-      #       #   - openid
-      #       #   - profile
+      Auth:
+        DefaultAuthorizer: ClientCognitoAuthorizer
+        Authorizers:
+          ClientCognitoAuthorizer:
+            UserPoolArn: !Ref CognitoUserPoolArn
       DefinitionBody:
         Fn::Transform:
           Name: AWS::Include
           Parameters:
             Location: ./openapi.yaml
+
+  EchoLogGroup:
+    Type: AWS::Logs::LogGroup
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${EchoFunction}
+      RetentionInDays: 7
 
   EchoFunction:
     Type: AWS::Serverless::Function
@@ -93,9 +85,13 @@ Resources:
         Banner:
           - js=import { createRequire } from 'module'; const require = createRequire(import.meta.url);
         External:
-          - '@aws-sdk/client-secrets-manager'
+          - '@aws-sdk/*'
 
 Outputs:
   ApiURL:
     Description: API URL
     Value: !Sub https://${API}.execute-api.${AWS::Region}.amazonaws.com/api
+
+  CognitoUserPoolId:
+    Description: Cognito User Pool Id
+    Value: !Ref CognitoUserPoolId

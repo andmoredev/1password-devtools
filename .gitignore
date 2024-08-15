@@ -1,3 +1,7 @@
 .aws-sam
 node_modules
+collection.postman.json
+portman/.env-portman
+tmp/
+notes.txt
 samconfig.ci.yaml
