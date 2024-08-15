@@ -33,11 +33,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Load secret
+        id: op-load-secret
+        uses: 1password/load-secrets-action@v2
+        with:
+          export-env: true
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          PIPELINE_EXECUTION_ROLE: op://development/qfc7xwrsroebqnxkekzrjp636m/pipeline-execution-role-arn
+          CLOUDFORMATION_EXECUTION_ROLE: op://development/qfc7xwrsroebqnxkekzrjp636m/cloudformation-exeuction-role-arn
+          ARTIFACTS_BUCKET_NAME: op://development/qfc7xwrsroebqnxkekzrjp636m/artifact-bucket-name
+
       - name: Configure AWS
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: us-east-1
-          role-to-assume: ${{ secrets.PIPELINE_EXECUTION_ROLE }}
+          role-to-assume: ${{ env.PIPELINE_EXECUTION_ROLE }}
           role-session-name: sam-deploy
           role-duration-seconds: 3600
           role-skip-session-tagging: true
@@ -54,9 +65,9 @@ jobs:
 
           sam deploy \
           --config-file samconfig.ci.yaml \
-          --s3-bucket ${{ secrets.ARTIFACTS_BUCKET_NAME }} \
+          --s3-bucket ${{ env.ARTIFACTS_BUCKET_NAME }} \
           --no-fail-on-empty-changeset \
-          --role-arn ${{ secrets.CLOUDFORMATION_EXECUTION_ROLE }}
+          --role-arn ${{ env.CLOUDFORMATION_EXECUTION_ROLE }}
 
       - id: getStackOutputs
         name: Get Stack Outputs
