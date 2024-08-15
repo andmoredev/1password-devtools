@@ -40,9 +40,9 @@ jobs:
           export-env: true
         env:
           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-          PIPELINE_EXECUTION_ROLE: op://development/qfc7xwrsroebqnxkekzrjp636m/pipeline-execution-role-arn
-          CLOUDFORMATION_EXECUTION_ROLE: op://development/qfc7xwrsroebqnxkekzrjp636m/cloudformation-exeuction-role-arn
-          ARTIFACTS_BUCKET_NAME: op://development/qfc7xwrsroebqnxkekzrjp636m/artifact-bucket-name
+          PIPELINE_EXECUTION_ROLE: op://development/sandbox/cicd/pipeline-execution-role-arn
+          CLOUDFORMATION_EXECUTION_ROLE: op://development/sandbox/cicd/cloudformation-exeuction-role-arn
+          ARTIFACTS_BUCKET_NAME: op://development/sandbox/cicd/artifact-bucket-name
 
       - name: Configure AWS
         uses: aws-actions/configure-aws-credentials@v4
