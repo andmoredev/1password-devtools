@@ -73,9 +73,9 @@ Resources:
             RestApiId: !Ref API
             Path: /echo
             Method: POST
-        Env:
-          Variables:
-            SENDGRID_API_KEY: !Ref SendGridAPIKey
+      Env:
+        Variables:
+          SENDGRID_API_KEY: !Ref SendGridAPIKey
       Policies:
         - AWSLambdaBasicExecutionRole
     Metadata:
