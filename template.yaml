@@ -73,7 +73,7 @@ Resources:
             RestApiId: !Ref API
             Path: /echo
             Method: POST
-      Env:
+      Environment:
         Variables:
           SENDGRID_API_KEY: !Ref SendGridAPIKey
       Policies:
