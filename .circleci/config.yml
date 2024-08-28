@@ -12,12 +12,20 @@ jobs:
       - node/install-packages:
           pkg-manager: npm
       - run:
+          name: Lint JS
+          command: |
+            npm ci
+            npm run lint
+      - run:
+          name: Lint OpenAPI
+          command: |
+            npm install -g @stoplight/spectral-cli
+            spectral lint schemas/openapi.yaml
+      - run:
           name: Run tests
-          command: npm test --passWithNoTests
-  deploy:
-    # This is an example deploy job, not actually used by the workflow
-    docker:
-      - image: cimg/base:stable
+          command: |
+            npm ci
+            npm run coverage  deploy:
     steps:
       # Replace this with steps to deploy to users
       - run:
