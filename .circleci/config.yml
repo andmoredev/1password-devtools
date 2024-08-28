@@ -25,7 +25,7 @@ jobs:
           name: Run tests
           command: |
             npm ci
-            npm run coverage  deploy:
+            npm run coverage
     steps:
       # Replace this with steps to deploy to users
       - run:
