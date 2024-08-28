@@ -2,7 +2,7 @@ version: 2.1
 orbs:
   1password: onepassword/secrets@1.0.0
 jobs:
-  deploy:
+  test-node:
     machine:
         image: ubuntu-2204:current
     steps:
@@ -21,4 +21,4 @@ jobs:
 workflows:
   deploy:
     jobs:
-      - deploy
+      - test-node
