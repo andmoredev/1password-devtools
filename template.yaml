@@ -16,6 +16,10 @@ Globals:
         POWERTOOLS_METRICS_NAMESPACE: 1password-devtools
 
 Parameters:
+  SendGridAPIKey:
+    Type: String
+    NoEcho: true
+
   CognitoUserPoolId:
     Type: 'AWS::SSM::Parameter::Value<String>'
     Default: '/andmoredev-auth/CognitoUserPoolId'
@@ -69,6 +73,9 @@ Resources:
             RestApiId: !Ref API
             Path: /echo
             Method: POST
+      Environment:
+        Variables:
+          SENDGRID_API_KEY: !Ref SendGridAPIKey
       Policies:
         - AWSLambdaBasicExecutionRole
     Metadata:
