@@ -1,47 +1,24 @@
-# This config was automatically generated from your source code
-# Stacks detected: cicd:github-actions:.github/workflows,deps:node:.
 version: 2.1
 orbs:
-  node: circleci/node@5
+  1password: onepassword/secrets@1.0.0
 jobs:
-  test-node:
-    # Install node dependencies and run tests
-    executor: node/default
-    steps:
-      - checkout
-      - node/install-packages:
-          pkg-manager: npm
-      - run:
-          name: Lint JS
-          command: |
-            npm ci
-            npm run lint
-      - run:
-          name: Lint OpenAPI
-          command: |
-            npm install -g @stoplight/spectral-cli
-            spectral lint schemas/openapi.yaml
-      - run:
-          name: Run tests
-          command: |
-            npm ci
-            npm run coverage
   deploy:
-    # This is an example deploy job, not actually used by the workflow
-    docker:
-      - image: cimg/base:stable
+    machine:
+        image: ubuntu-2204:current
     steps:
-      # Replace this with steps to deploy to users
+      - 1password/install-cli:
+          version: 2.x.x
+      - checkout
       - run:
-          name: deploy
-          command: '#e.g. ./deploy.sh'
-      - run:
-          name: found github actions config
-          command: ':'
+          shell: op run -- /bin/bash
+          environment:
+            PIPELINE_EXECUTION_ROLE: op://andmoredev-sandbox/cicd/circleci-pipeline-execution-role-arn
+      - aws-cli/setup:
+        role-arn: arn:aws:iam::123456789012:role/OIDC-ROLE
+        aws-region: us-east-1
+        role-session-name: example-session
+
 workflows:
-  build-and-test:
+  deploy:
     jobs:
-      - test-node
-    # - deploy:
-    #     requires:
-    #       - test-node
+      - deploy
