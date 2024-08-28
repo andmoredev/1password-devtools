@@ -14,9 +14,9 @@ jobs:
           environment:
             PIPELINE_EXECUTION_ROLE: op://andmoredev-sandbox/cicd/circleci-pipeline-execution-role-arn
       - aws-cli/setup:
-        role-arn: arn:aws:iam::123456789012:role/OIDC-ROLE
-        aws-region: us-east-1
-        role-session-name: example-session
+          role-arn: arn:aws:iam::123456789012:role/OIDC-ROLE
+          aws-region: us-east-1
+          role-session-name: example-session
 
 workflows:
   deploy:
