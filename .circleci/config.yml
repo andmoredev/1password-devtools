@@ -12,12 +12,9 @@ jobs:
       - run:
           shell: op run -- /bin/bash
           environment:
-            AWS_ACCESS_KEY_ID: op://company/app/aws/access_key_id
-            AWS_SECRET_ACCESS_KEY: op://company/app/aws/secret_access_key
+            PIPELINE_EXECUTION_ROLE: op://andmoredev-sandbox/cicd/circleci-pipeline-execution-role-arn
           command: |
-            echo "This value will be masked: $AWS_ACCESS_KEY_ID"
-            echo "This value will be masked: $AWS_SECRET_ACCESS_KEY"
-            ./deploy-my-app.sh
+            echo "This value will be masked: $PIPELINE_EXECUTION_ROLE"
 workflows:
   deploy:
     jobs:
