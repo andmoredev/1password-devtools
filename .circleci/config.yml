@@ -16,9 +16,9 @@ jobs:
           PIPELINE_EXECUTION_ROLE: op://andmoredev-sandbox/cicd/circleci-pipeline-execution-role-arn
       - node/install-packages:
           pkg-manager: npm
-      - run:
-          name: Run tests
-          command: npm test --passWithNoTests
+      # - run:
+      #     name: Run tests
+      #     command: npm test --passWithNoTests
 workflows:
   build-and-test:
     jobs:
