@@ -1,24 +1,17 @@
 version: 2.1
 orbs:
-  1password: onepassword/secrets@1.0.0
+  node: circleci/node@5
 jobs:
   test-node:
-    machine:
-        image: ubuntu-2204:current
+    executor: node/default
     steps:
-      - 1password/install-cli:
-          version: 2.x.x
       - checkout
+      - node/install-packages:
+          pkg-manager: npm
       - run:
-          shell: op run -- /bin/bash
-          environment:
-            PIPELINE_EXECUTION_ROLE: op://andmoredev-sandbox/cicd/circleci-pipeline-execution-role-arn
-      - aws-cli/setup:
-          role-arn: arn:aws:iam::123456789012:role/OIDC-ROLE
-          aws-region: us-east-1
-          role-session-name: example-session
-
+          name: Run tests
+          command: npm test --passWithNoTests
 workflows:
-  deploy:
+  build-and-test:
     jobs:
       - test-node
