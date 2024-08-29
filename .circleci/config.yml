@@ -7,7 +7,7 @@ jobs:
     machine:
         image: ubuntu-2204:current
     docker:
-      - image: cimg/aws:2022.06
+        image: cimg/aws:2022.06
     steps:
       - 1password/install-cli:
           version: 2.18.0
