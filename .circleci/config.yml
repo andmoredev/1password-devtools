@@ -18,8 +18,11 @@ jobs:
             echo "This value will be masked: $PIPELINE_EXECUTION_ROLE"
       - aws-cli/setup:
           role-arn: 'arn:aws:iam::123456789012:role/OIDC-ROLE'
-          aws-region: "us-east-1"
-          role-session-name: "example-session"
+          aws-region: "us-west-1"
+          # optional parameters
+          profile-name: "OIDC-PROFILE"
+          role-session-name: “example-session”
+          session-duration: 1800
 workflows:
   deploy:
     jobs:
