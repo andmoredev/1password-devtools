@@ -1,6 +1,7 @@
 version: 2.1
 orbs:
   1password: onepassword/secrets@1.0.0
+  aws-cli: circleci/aws-cli@3.1
 jobs:
   deploy:
     machine:
@@ -15,6 +16,10 @@ jobs:
             PIPELINE_EXECUTION_ROLE: op://andmoredev-sandbox/cicd/circleci-pipeline-execution-role-arn
           command: |
             echo "This value will be masked: $PIPELINE_EXECUTION_ROLE"
+      - aws-cli/setup:
+          role-arn: arn:aws:iam::123456789012:role/OIDC-ROLE
+          aws-region: us-east-1
+          role-session-name: example-session
 workflows:
   deploy:
     jobs:
