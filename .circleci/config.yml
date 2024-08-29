@@ -11,14 +11,9 @@ jobs:
           version: 2.18.0
       - checkout
       - run:
-        shell: op run -- /bin/bash
-        environment:
-          PIPELINE_EXECUTION_ROLE: op://andmoredev-sandbox/cicd/circleci-pipeline-execution-role-arn
-      - node/install-packages:
-          pkg-manager: npm
-      # - run:
-      #     name: Run tests
-      #     command: npm test --passWithNoTests
+          shell: op run -- /bin/bash
+          environment:
+            PIPELINE_EXECUTION_ROLE: op://andmoredev-sandbox/cicd/circleci-pipeline-execution-role-arn
 workflows:
   build-and-test:
     jobs:
