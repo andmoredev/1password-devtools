@@ -1,6 +1,7 @@
 version: 2.1
 orbs:
   node: circleci/node@5
+  1password: onepassword/secrets@1.0.0
 jobs:
   test-node:
     machine:
