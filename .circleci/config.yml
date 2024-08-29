@@ -1,11 +1,10 @@
 version: 2.1
 orbs:
-  node: circleci/node@5
   1password: onepassword/secrets@1.0.0
 jobs:
-  test-node:
+  deploy:
     machine:
-      image: ubuntu-2204:current
+        image: ubuntu-2204:current
     steps:
       - 1password/install-cli:
           version: 2.18.0
@@ -13,8 +12,13 @@ jobs:
       - run:
           shell: op run -- /bin/bash
           environment:
-            PIPELINE_EXECUTION_ROLE: op://andmoredev-sandbox/cicd/circleci-pipeline-execution-role-arn
+            AWS_ACCESS_KEY_ID: op://company/app/aws/access_key_id
+            AWS_SECRET_ACCESS_KEY: op://company/app/aws/secret_access_key
+          command: |
+            echo "This value will be masked: $AWS_ACCESS_KEY_ID"
+            echo "This value will be masked: $AWS_SECRET_ACCESS_KEY"
+            ./deploy-my-app.sh
 workflows:
-  build-and-test:
+  deploy:
     jobs:
-      - test-node
+      - deploy
