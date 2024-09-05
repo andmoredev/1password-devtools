@@ -18,7 +18,7 @@ jobs:
             echo "This value will be masked: $PIPELINE_EXECUTION_ROLE"
       - aws-cli/setup:
           profile_name: default
-          role_arn: $PIPELINE_EXECUTION_ROLE
+          role_arn: arn:aws:iam::965116670064:role/circleci-sandbox-pipelineexecutionrole
 workflows:
   deploy:
     jobs:
