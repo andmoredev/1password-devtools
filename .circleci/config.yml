@@ -18,7 +18,7 @@ jobs:
             echo "This value will be masked: $PIPELINE_EXECUTION_ROLE"
       - aws-cli/setup:
           profile_name: default
-          role_arn: arn:aws:iam::123456789012:role/OIDC-ROLE
+          role_arn: $PIPELINE_EXECUTION_ROLE
 workflows:
   deploy:
     jobs:
