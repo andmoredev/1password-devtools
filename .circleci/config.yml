@@ -14,11 +14,10 @@ jobs:
           shell: op run -- /bin/bash
           environment:
             PIPELINE_EXECUTION_ROLE: op://andmoredev-sandbox/cicd/circleci-pipeline-execution-role-arn
-          command: |
-            echo "This value will be masked: $PIPELINE_EXECUTION_ROLE"
+          command: echo 'export MY_ENV_VAR="$PIPELINE_EXECUTION_ROLE"' >> "$BASH_ENV"
       - aws-cli/setup:
           profile_name: default
-          role_arn: arn:aws:iam::965116670064:role/circleci-sandbox-pipelineexecutionrole
+          role_arn: $MY_ENV_VAR
 workflows:
   deploy:
     jobs:
