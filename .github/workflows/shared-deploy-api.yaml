@@ -44,7 +44,7 @@ jobs:
         env:
           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
           PIPELINE_EXECUTION_ROLE: op://andmoredev-sandbox/cicd/pipeline-execution-role-arn
-          CLOUDFORMATION_EXECUTION_ROLE: op://andmoredev-sandbox/cicd/cloudformation-exeuction-role-arn
+          CLOUDFORMATION_EXECUTION_ROLE: op://andmoredev-sandbox/cicd/cloudformation-execution-role-arn
           ARTIFACTS_BUCKET_NAME: op://andmoredev-sandbox/cicd/artifact-bucket-name
 
       - name: Configure AWS
